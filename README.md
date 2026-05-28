@@ -1,6 +1,6 @@
 # Retro Assistant
 
-A reto-themed terminal contact and note manager built with Python and Textual. Manage contacts, phone numbers, emails, addresses, birthdays, and tagged notes.
+A retro-themed terminal contact and note manager built with Python and Textual. Manage contacts, phone numbers, emails, addresses, birthdays, and tagged notes.
 
 ---
 
