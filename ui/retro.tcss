@@ -1,0 +1,615 @@
+/* ══════════════════════════════════════════════════════════════
+   RETRO TERMINAL  ·  Retro Assistant
+   ══════════════════════════════════════════════════════════════
+
+   PALETTE
+   ─────────────────────────────────────────────────────────────
+   #0a0a0a  BG BASE    near-black (CRT background)
+   #0e0e0e  BG PANEL   slightly raised panel
+   #141414  BG RAISED  header / sidebar / info bars
+   #0a200a  BG SELECT  active selection
+   #0d180d  BG HOVER   hover highlight
+
+   #5ab05a  GREEN      primary phosphor green
+   #3a7a3a  G MID      secondary / borders
+   #1e4a1e  G DIM      inactive borders
+   #0d280d  G DARK     structural separators
+
+   #cc8800  AMBER      warm titles / highlights
+   #885500  A DIM      amber border
+
+   #44aa88  TEAL       notes accent (slightly cooler)
+   #aa3322  RED        error / destructive
+
+   #aaddaa  T BRIGHT   bright emphasis text
+   #88cc88  T BODY     standard body text
+   #3a7a3a  T DIM      muted / secondary
+   #1e4a1e  T DARK     disabled / placeholder
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ── Base reset ─────────────────────────────────────────────── */
+
+App {
+    background: #0a0a0a;
+    color: #88cc88;
+}
+
+Screen {
+    background: #0a0a0a;
+    color: #88cc88;
+    layers: base overlay notifications;
+}
+
+
+/* ── Widget defaults ─────────────────────────────────────────── */
+
+Button {
+    height: 3;
+    width: 1fr;
+    content-align: center middle;
+    text-style: none;
+    border: none;
+    background: #0e0e0e;
+    color: #88cc88;
+}
+
+Input {
+    background: #0e0e0e;
+    color: #88cc88;
+    border: solid #1e4a1e;
+    height: 3;
+    padding: 0 1;
+}
+
+Input:focus {
+    background: #0a0a0a;
+    color: #5ab05a;
+    border: solid #3a7a3a;
+}
+
+Input.-invalid {
+    border: solid #aa3322;
+    color: #aa3322;
+}
+
+Input.-valid {
+    border: solid #3a7a3a;
+}
+
+RichLog {
+    background: #0a0a0a;
+    color: #88cc88;
+    border: none;
+    height: 1fr;
+    padding: 0 1;
+    scrollbar-background: #0e0e0e;
+    scrollbar-color: #1e4a1e;
+    scrollbar-background-hover: #0e0e0e;
+    scrollbar-color-hover: #3a7a3a;
+    scrollbar-background-active: #0e0e0e;
+    scrollbar-color-active: #5ab05a;
+}
+
+DataTable {
+    background: #0a0a0a;
+    color: #88cc88;
+    border: none;
+    height: 1fr;
+    scrollbar-background: #0e0e0e;
+    scrollbar-color: #1e4a1e;
+    scrollbar-background-hover: #0e0e0e;
+    scrollbar-color-hover: #3a7a3a;
+    scrollbar-background-active: #0e0e0e;
+    scrollbar-color-active: #5ab05a;
+}
+
+.datatable--header {
+    background: #0d180d;
+    color: #cc8800;
+    text-style: bold;
+}
+
+.datatable--header-hover {
+    background: #0d180d;
+    color: #cc8800;
+    text-style: bold;
+}
+
+.datatable--header-cursor {
+    background: #0a0a0a;
+    color: #cc8800;
+    text-style: bold;
+}
+
+.datatable--odd-row {
+    background: #0a0a0a;
+    color: #88cc88;
+}
+
+.datatable--even-row {
+    background: #0d0d0d;
+    color: #88cc88;
+}
+
+.datatable--cursor {
+    background: #0a0a0a;
+    color: #88cc88;
+    text-style: none;
+}
+
+.datatable--hover {
+    background: #0a0a0a;
+    color: #88cc88;
+}
+
+DataTable:hover .datatable--cursor {
+    background: #0d180d;
+    color: #aaddaa;
+    text-style: none;
+}
+
+DataTable:focus .datatable--cursor {
+    background: #0a200a;
+    color: #5ab05a;
+    text-style: bold;
+}
+
+ScrollBar {
+    background: #0e0e0e;
+}
+
+ScrollBar > .scrollbar--bar {
+    background: #1e4a1e;
+    color: #1e4a1e;
+}
+
+ScrollBar > .scrollbar--bar:hover {
+    background: #3a7a3a;
+    color: #3a7a3a;
+}
+
+
+/* ── App header ─────────────────────────────────────────────── */
+
+#app-header {
+    dock: top;
+    height: 1;
+    layout: horizontal;
+    background: #141414;
+    padding: 0;
+}
+
+#header-logo {
+    width: 24;
+    height: 1;
+    background: #141414;
+    color: #5ab05a;
+    text-style: bold;
+    content-align: center middle;
+    border-right: solid #1e4a1e;
+    padding: 0;
+}
+
+
+/* ── Root layout ────────────────────────────────────────────── */
+
+#layout {
+    layout: horizontal;
+    height: 1fr;
+    background: #0a0a0a;
+}
+
+
+/* ── Sidebar ────────────────────────────────────────────────── */
+
+#sidebar {
+    width: 24;
+    height: 100%;
+    background: #0e0e0e;
+    border-right: solid #1e4a1e;
+    padding: 0;
+}
+
+#sidebar-notes-label {
+    height: 1;
+    width: 100%;
+    background: #141414;
+    color: #2a7a60;
+    text-style: bold;
+    content-align: left middle;
+    border-top: solid #0d280d;
+    padding: 0 1;
+    margin: 1 0 0 0;
+}
+
+.menu-btn {
+    width: 100%;
+    height: 3;
+    background: #0e0e0e;
+    color: #88cc88;
+    border: none;
+    border-left: solid #0e0e0e;
+    text-style: none;
+    content-align: left middle;
+    padding: 0 2;
+    margin: 0;
+}
+
+.menu-btn:hover {
+    background: #0d180d;
+    color: #5ab05a;
+    border-left: solid #cc8800;
+}
+
+.menu-btn:focus {
+    background: #0a200a;
+    color: #cc8800;
+    border-left: solid #cc8800;
+    text-style: bold;
+}
+
+#sidebar-info {
+    dock: bottom;
+    height: auto;
+    background: #141414;
+    border-top: solid #0d280d;
+    padding: 1;
+}
+
+#sys-contacts {
+    height: 1;
+    color: #3a7a3a;
+    padding: 0;
+}
+
+#sys-notes {
+    height: 1;
+    color: #2a7a60;
+    padding: 0;
+}
+
+
+
+/* ── Main panel ─────────────────────────────────────────────── */
+
+#main-panel {
+    layout: vertical;
+    width: 1fr;
+    height: 100%;
+    background: #0a0a0a;
+    padding: 0;
+}
+
+#content-area {
+    height: 1fr;
+    layout: vertical;
+}
+
+
+/* ── Log view ───────────────────────────────────────────────── */
+
+#log-view {
+    layout: vertical;
+    height: 1fr;
+}
+
+#output {
+    height: 1fr;
+    background: #0a0a0a;
+    color: #88cc88;
+    padding: 0 1;
+    scrollbar-background: #0e0e0e;
+    scrollbar-color: #1e4a1e;
+    scrollbar-background-hover: #0e0e0e;
+    scrollbar-color-hover: #3a7a3a;
+    scrollbar-background-active: #0e0e0e;
+    scrollbar-color-active: #5ab05a;
+}
+
+
+/* ── View header rows (Back btn + Title label) ──────────────── */
+
+.view-header-row {
+    layout: horizontal;
+    height: 3;
+    background: #141414;
+    border-bottom: solid #0d280d;
+    margin: 0;
+    padding: 0;
+}
+
+.row-title {
+    width: 1fr;
+    height: 3;
+    color: #cc8800;
+    text-style: bold;
+    content-align: left middle;
+    background: transparent;
+    padding: 0 1;
+}
+
+.back-btn {
+    width: auto;
+    min-width: 4;
+    height: 3;
+    background: transparent;
+    color: #3a7a3a;
+    border: none;
+    padding: 0 1;
+    text-style: none;
+}
+
+.back-btn:hover {
+    color: #5ab05a;
+    background: #0d180d;
+    border: none;
+}
+
+.back-btn:focus {
+    color: #cc8800;
+    background: transparent;
+    border: none;
+    text-style: bold;
+}
+
+.back-btn.-active {
+    background: #0d180d;
+    text-style: none;
+}
+
+
+/* ── Contacts view ──────────────────────────────────────────── */
+
+#contacts-view {
+    layout: vertical;
+    height: 1fr;
+    display: none;
+}
+
+#contacts-table {
+    width: 100%;
+    height: 1fr;
+    background: #0a0a0a;
+    scrollbar-background: #0e0e0e;
+    scrollbar-color: #1e4a1e;
+    scrollbar-background-hover: #0e0e0e;
+    scrollbar-color-hover: #3a7a3a;
+    scrollbar-background-active: #0e0e0e;
+    scrollbar-color-active: #5ab05a;
+}
+
+#contact-actions {
+    height: auto;
+    display: none;
+    background: #0e0e0e;
+    border: solid #1e4a1e;
+    padding: 1;
+    margin-top: 1;
+}
+
+#selected-label {
+    height: 1;
+    color: #5ab05a;
+    text-style: bold;
+    margin: 0 0 1 0;
+    padding: 0;
+}
+
+
+/* ── Detail actions ─────────────────────────────────────────── */
+
+#detail-actions {
+    height: auto;
+    display: none;
+    background: #0e0e0e;
+    border: solid #1e4a1e;
+    padding: 1;
+    margin-top: 1;
+}
+
+#detail-title-row {
+    layout: horizontal;
+    height: 3;
+    background: #141414;
+    border-bottom: solid #0d280d;
+    margin: 0 0 1 0;
+    padding: 0;
+}
+
+#detail-label {
+    width: 1fr;
+    height: 3;
+    color: #5ab05a;
+    text-style: bold;
+    content-align: left middle;
+    background: transparent;
+    padding: 0 1;
+}
+
+
+/* ── Action rows and buttons ────────────────────────────────── */
+
+.action-row {
+    height: auto;
+    margin-bottom: 1;
+}
+
+.action-btn {
+    background: #0e0e0e;
+    color: #88cc88;
+    border: solid #1e4a1e;
+    margin-right: 1;
+    text-style: none;
+}
+
+.action-btn:hover {
+    background: #0d180d;
+    color: #5ab05a;
+    border: solid #3a7a3a;
+}
+
+.action-btn:focus {
+    background: #0a200a;
+    color: #cc8800;
+    border: solid #cc8800;
+    text-style: bold;
+}
+
+.action-btn.-active {
+    background: #0a200a;
+    text-style: none;
+}
+
+.detail-btn {
+    background: #0e0e0e;
+    color: #88cc88;
+    border: solid #1e4a1e;
+    margin-right: 1;
+    text-style: none;
+}
+
+.detail-btn:hover {
+    background: #0d180d;
+    color: #5ab05a;
+    border: solid #3a7a3a;
+}
+
+.detail-btn:focus {
+    background: #0a200a;
+    color: #cc8800;
+    border: solid #cc8800;
+    text-style: bold;
+}
+
+.detail-btn.-active {
+    background: #0a200a;
+    text-style: none;
+}
+
+/* Danger overrides — delete buttons */
+
+#act-delete,
+#detail-delete {
+    background: #0e0e0e;
+    color: #aa3322;
+    border: solid #5a1a14;
+}
+
+#act-delete:hover,
+#detail-delete:hover {
+    background: #180a08;
+    color: #cc4433;
+    border: solid #aa3322;
+}
+
+#act-delete:focus,
+#detail-delete:focus {
+    background: #180a08;
+    color: #aa3322;
+    border: solid #cc8800;
+    text-style: bold;
+}
+
+
+/* ── Notes view ─────────────────────────────────────────────── */
+
+#notes-view {
+    layout: vertical;
+    height: 1fr;
+    display: none;
+}
+
+#notes-table {
+    width: 100%;
+    height: 1fr;
+    background: #0a0a0a;
+    scrollbar-background: #0e0e0e;
+    scrollbar-color: #1e4a1e;
+    scrollbar-background-hover: #0e0e0e;
+    scrollbar-color-hover: #3a7a3a;
+    scrollbar-background-active: #0e0e0e;
+    scrollbar-color-active: #44aa88;
+}
+
+#note-actions {
+    height: auto;
+    display: none;
+    background: #0e0e0e;
+    border: solid #1a4a3a;
+    padding: 1;
+    margin-top: 1;
+}
+
+#note-selected-label {
+    height: 1;
+    color: #44aa88;
+    text-style: bold;
+    margin: 0 0 1 0;
+    padding: 0;
+}
+
+/* Danger override — note delete */
+
+#note-delete {
+    background: #0e0e0e;
+    color: #aa3322;
+    border: solid #5a1a14;
+}
+
+#note-delete:hover {
+    background: #180a08;
+    color: #cc4433;
+    border: solid #aa3322;
+}
+
+#note-delete:focus {
+    background: #180a08;
+    color: #aa3322;
+    border: solid #cc8800;
+    text-style: bold;
+}
+
+
+/* ── Command bar ─────────────────────────────────────────────── */
+
+#cmd-bar {
+    dock: bottom;
+    height: 3;
+    layout: horizontal;
+    background: #141414;
+    border-top: solid #0d280d;
+    padding: 0;
+}
+
+#cmd-bar:focus-within {
+    border-top: solid #3a7a3a;
+}
+
+#cmd-prefix {
+    width: 5;
+    height: 100%;
+    background: #141414;
+    color: #3a7a3a;
+    content-align: center middle;
+    text-style: bold;
+    border-right: solid #0d280d;
+    padding: 0;
+}
+
+#cmd-input {
+    width: 1fr;
+    height: 100%;
+    background: #0a0a0a;
+    color: #5ab05a;
+    border: none;
+    text-style: bold;
+    padding: 0 1;
+}
+
+#cmd-input:focus {
+    background: #0a0a0a;
+    color: #5ab05a;
+    border: none;
+}
+
