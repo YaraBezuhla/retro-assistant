@@ -157,8 +157,7 @@ Each note gets a numeric ID on creation. Run `all-notes` to see IDs. Tags are st
 
 - **Two modes** — Contact mode and Note mode, switchable from the sidebar
 - **Command input** — type any command at the bottom input bar and press Enter
-- **Multi-step wizard** — guided flow for adding and editing contacts
-- **Keyboard navigation** — sidebar buttons, input field, standard TUI bindings
+- **Keyboard navigation** — sidebar buttons, input field
 
 ---
 
