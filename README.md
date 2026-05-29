@@ -88,8 +88,8 @@ retro-assistant/
 │
 ├── ui/
 │   ├── tui.py                       # RetroBotApp (Textual App)
-│   ├── retro.tcss                   # TCSS stylesheet (neon green theme)
-│   └── retro_design_system.py       # Color tokens + layout constants
+│   ├── retro.tcss                  
+│   └── retro_design_system.py       
 │
 └── tests/
     └── test_bot.py
@@ -148,7 +148,7 @@ Each note gets a numeric ID on creation. Run `all-notes` to see IDs. Tags are st
 
 | Command | Description |
 |---|---|
-| `birthdays` | Show upcoming birthdays (default: next 7 days) |
+| `birthdays` | Show upcoming birthdays    |
 | `birthdays <days>` | Show birthdays within the next N days |
 
 ---
