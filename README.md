@@ -148,7 +148,7 @@ Each note gets a numeric ID on creation. Run `all-notes` to see IDs. Tags are st
 
 | Command | Description |
 |---|---|
-| `birthdays` | Show upcoming birthdays (default: next 7 days) |
+| `birthdays` | Show upcoming birthdays    |
 | `birthdays <days>` | Show birthdays within the next N days |
 
 ---
