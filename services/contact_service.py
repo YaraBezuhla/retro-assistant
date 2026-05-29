@@ -42,7 +42,9 @@ class ContactService:
         return f"Phone '{phone}' removed from {name}."
 
     def show_phone(self, name: str) -> str:
-        return str(self._require(name))
+        record = self._require(name)
+        phones = "; ".join(str(p) for p in record.phones)
+        return f"{record.name}: {phones or '—'}"
 
     def show_all(self) -> str:
         return "\n".join(map(str, self._book.data.values())) or "Address book is empty."
