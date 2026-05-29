@@ -251,7 +251,7 @@ ScrollBar > .scrollbar--bar:hover {
 
 #sidebar-info {
     dock: bottom;
-    height: auto;
+    height: 6;
     background: #141414;
     border-top: solid #0d280d;
     padding: 1;
@@ -573,27 +573,35 @@ ScrollBar > .scrollbar--bar:hover {
 
 /* ── Command bar ─────────────────────────────────────────────── */
 
-#cmd-bar {
+#cmd-area {
     dock: bottom;
-    height: 3;
-    layout: horizontal;
+    height: auto;
     background: #141414;
     border-top: solid #0d280d;
-    padding: 0;
 }
 
-#cmd-bar:focus-within {
+#cmd-area:focus-within {
     border-top: solid #3a7a3a;
 }
 
-#cmd-prefix {
-    width: 5;
-    height: 100%;
+#suggestions-bar {
+    height: 1;
     background: #141414;
-    color: #3a7a3a;
-    content-align: center middle;
-    text-style: bold;
-    border-right: solid #0d280d;
+    color: #88cc88;
+    padding: 0 2;
+}
+
+#cmd-hint {
+    height: 1;
+    background: #141414;
+    color: #1e4a1e;
+    padding: 0 6;
+}
+
+#cmd-bar {
+    height: 3;
+    layout: horizontal;
+    background: #141414;
     padding: 0;
 }
 

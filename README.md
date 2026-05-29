@@ -104,10 +104,10 @@ retro-assistant/
 | Command | Description |
 |---|---|
 | `add <name> <phone>` | Add a new contact or add phone to existing |
-| `change <name> <old_phone> <new_phone>` | Replace a phone number |
+| `change-phone <name> <old_phone> <new_phone>` | Replace a phone number |
 | `remove-phone <name> <phone>` | Remove a phone number |
-| `phone <name>` | Show all phone numbers for a contact |
-| `delete <name>` | Remove a contact |
+| `show-phone <name>` | Show all phone numbers for a contact |
+| `delete-contact <name>` | Remove a contact |
 | `add-email <name> <email>` | Add an email address |
 | `change-email <name> <old_email> <new_email>` | Replace an email address |
 | `remove-email <name> <email>` | Remove an email address |
@@ -118,7 +118,7 @@ retro-assistant/
 | `show-address <name>` | Show all addresses for a contact |
 | `add-birthday <name> <DD.MM.YYYY>` | Set birthday |
 | `show-birthday <name>` | Show a contact's birthday |
-| `all` | List all contacts |
+| `all-contacts` | List all contacts |
 
 **Phone validation** — accepts Ukrainian formats: `+380XXXXXXXXX`, `380XXXXXXXXX`, `0XXXXXXXXX`.  
 **Email validation** — RFC-compliant regex check.  
@@ -131,7 +131,7 @@ retro-assistant/
 | Command | Description |
 |---|---|
 | `add-note <content>` | Create a new note (max 500 chars) |
-| `edit-note <id> <content>` | Edit note content |
+| `change-note <id> <content>` | Edit note content |
 | `delete-note <id>` | Delete a note |
 | `show-note <id>` | Display a single note |
 | `all-notes` | List all notes |

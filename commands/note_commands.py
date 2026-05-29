@@ -11,11 +11,11 @@ def add_note(args, service):
     return service.add_note(content)
 
 
-@note_registry.command("edit-note", "<id> <new_content…>  — update note content (Call ‘all-notes’ to find out the ID)", modifies_data=True)
+@note_registry.command("change-note", "<id> <new_content…>  — update note content (Call ‘all-notes’ to find out the ID)", modifies_data=True)
 @input_error
 def edit_note(args, service):
     if len(args) < 2:
-        raise ValueError("Usage: edit-note <id> <new content…>")
+        raise ValueError("Usage: change-note <id> <new content…>")
     note_id, *rest = args
     content = " ".join(rest)
     return service.edit_note(note_id, content)

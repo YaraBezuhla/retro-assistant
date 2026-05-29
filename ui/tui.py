@@ -5,7 +5,7 @@ from datetime import date
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Label, RichLog, Input, DataTable
 from textual.containers import Vertical, Horizontal
-from textual import on
+from textual import events, on
 
 from commands.registry import CommandRegistry
 from repositories.abstract_contact_repository import AbstractContactRepository
@@ -54,6 +54,12 @@ class RetroBotApp(App):
         self._search_query: str      = ""
         self._note_search_query: str = ""
         self._note_col_width: int    = 60
+        # CLI — history & autocomplete
+        self._history: list[str]             = []
+        self._history_idx: int               = -1
+        self._suggestions: list[tuple[str, str]] = []
+        self._suggestion_idx: int            = -1
+        self._suppress_autocomplete: bool    = False
 
     # ── Layout ────────────────────────────────────────────────────────────────
 
@@ -130,9 +136,11 @@ class RetroBotApp(App):
                                 yield Button("Remove tag",  id="note-rm-tag",  classes="action-btn")
                                 yield Button("Remove",      id="note-delete",  classes="action-btn")
 
-                with Horizontal(id="cmd-bar"):
-                    yield Label(">",                                id="cmd-prefix")
-                    yield Input(placeholder="type a command...",   id="cmd-input")
+                with Vertical(id="cmd-area"):
+                    yield Label("", id="suggestions-bar")
+                    yield Label("", id="cmd-hint")
+                    with Horizontal(id="cmd-bar"):
+                        yield Input(placeholder="type a command...",   id="cmd-input")
 
     # ── Startup ───────────────────────────────────────────────────────────────
 
@@ -420,6 +428,7 @@ class RetroBotApp(App):
         inp.placeholder    = "type a command..."
         inp.clear()
         self._hide_detail_actions()
+        self._clear_suggestions()
 
     def _show_contact_after_change(self) -> None:
         contact = self._selected_contact
@@ -871,6 +880,157 @@ class RetroBotApp(App):
         inp.placeholder = "tag to remove"
         inp.focus()
 
+    # ── Autocomplete & history ────────────────────────────────────────────────
+
+    def _all_command_defs(self) -> list[tuple[str, str]]:
+        specials = [
+            ("help",  "— show all commands"),
+            ("exit",  "— quit the application"),
+        ]
+        return (
+            specials
+            + [(c.name, c.description) for c in self._cmd_registry.commands()]
+            + [(c.name, c.description) for c in self._note_registry.commands()]
+        )
+
+    def _build_suggestions(self, text: str) -> None:
+        if self._mode is not None or not text.strip():
+            self._clear_suggestions()
+            return
+
+        parts    = text.split()
+        word     = parts[0] if parts else ""
+        has_args = len(parts) > 1 or text.endswith(" ")
+
+        all_cmds = self._all_command_defs()
+        matches  = [c for c in all_cmds if c[0].startswith(word)]
+        exact    = next((c for c in matches if c[0] == word), None)
+
+        if not matches:
+            self._clear_suggestions()
+            return
+
+        if has_args or (exact and len(matches) == 1):
+            self._suggestions    = []
+            self._suggestion_idx = -1
+            self.query_one("#suggestions-bar", Label).update("")
+            self._show_hint(exact) if exact else self.query_one("#cmd-hint", Label).update("")
+            return
+
+        self._suggestions = matches
+        self._suggestion_idx = 0 if len(matches) == 1 else -1
+        self._render_suggestions()
+
+    def _render_suggestions(self) -> None:
+        bar      = self.query_one("#suggestions-bar", Label)
+        hint_lbl = self.query_one("#cmd-hint",        Label)
+
+        if not self._suggestions:
+            bar.update("")
+            hint_lbl.update("")
+            return
+
+        parts = []
+        for i, (name, _) in enumerate(self._suggestions):
+            if i == self._suggestion_idx:
+                parts.append(f"[bold {SAGE}]❯ {name}[/bold {SAGE}]")
+            else:
+                parts.append(f"[{TEXT_PRIMARY}]{name}[/{TEXT_PRIMARY}]")
+        bar.update("   ".join(parts))
+
+        if self._suggestion_idx >= 0:
+            self._show_hint(self._suggestions[self._suggestion_idx])
+        else:
+            hint_lbl.update(
+                f"[{TEXT_DIM}]↑↓ — navigate   Tab — apply[/{TEXT_DIM}]"
+            )
+
+    def _show_hint(self, cmd: tuple[str, str]) -> None:
+        name, desc = cmd
+        self.query_one("#cmd-hint", Label).update(
+            f"[{SAGE_MID}]{name}[/{SAGE_MID}]  [{TEXT_DIM}]{desc}[/{TEXT_DIM}]"
+        )
+
+    def _clear_suggestions(self) -> None:
+        self._suggestions    = []
+        self._suggestion_idx = -1
+        try:
+            self.query_one("#suggestions-bar", Label).update("")
+            self.query_one("#cmd-hint",        Label).update("")
+        except Exception:
+            pass
+
+    def _navigate_history(self, delta: int) -> None:
+        if not self._history:
+            return
+        inp = self.query_one("#cmd-input", Input)
+        if delta < 0:
+            if self._history_idx == -1:
+                self._history_idx = len(self._history) - 1
+            elif self._history_idx > 0:
+                self._history_idx -= 1
+        else:
+            if self._history_idx == -1:
+                return
+            if self._history_idx < len(self._history) - 1:
+                self._history_idx += 1
+            else:
+                self._history_idx = -1
+                self._suppress_autocomplete = True
+                inp.value = ""
+                return
+        self._suppress_autocomplete = True
+        inp.value = self._history[self._history_idx]
+        inp.cursor_position = len(inp.value)
+
+    def on_key(self, event: events.Key) -> None:
+        inp = self.query_one("#cmd-input", Input)
+        if self.focused is not inp:
+            return
+
+        key = event.key
+
+        if key == "escape":
+            event.prevent_default()
+            self._clear_suggestions()
+            self._history_idx = -1
+            return
+
+        if key == "tab" and self._suggestions:
+            event.prevent_default()
+            if self._suggestion_idx < 0:
+                self._suggestion_idx = 0
+            cmd_tuple = self._suggestions[self._suggestion_idx]
+            self._suppress_autocomplete = True
+            inp.value = cmd_tuple[0] + " "
+            inp.cursor_position = len(inp.value)
+            self._suggestions    = []
+            self._suggestion_idx = -1
+            self.query_one("#suggestions-bar", Label).update("")
+            self._show_hint(cmd_tuple)
+            return
+
+        if key == "up":
+            if self._suggestions:
+                event.prevent_default()
+                n = len(self._suggestions)
+                self._suggestion_idx = (n - 1) if self._suggestion_idx <= 0 else (self._suggestion_idx - 1)
+                self._render_suggestions()
+            elif self._mode is None:
+                event.prevent_default()
+                self._navigate_history(-1)
+            return
+
+        if key == "down":
+            if self._suggestions:
+                event.prevent_default()
+                self._suggestion_idx = (self._suggestion_idx + 1) % len(self._suggestions)
+                self._render_suggestions()
+            elif self._mode is None:
+                event.prevent_default()
+                self._navigate_history(1)
+            return
+
     # ── Live search filter ────────────────────────────────────────────────────
 
     @on(Input.Changed, "#cmd-input")
@@ -878,9 +1038,16 @@ class RetroBotApp(App):
         if self._mode == "search":
             self._search_query = event.value.strip()
             self._populate_contacts_table(self._search_query)
-        elif self._mode == "search_note":
+            return
+        if self._mode == "search_note":
             self._note_search_query = event.value.strip()
             self._populate_notes_table(self._note_search_query)
+            return
+        if self._suppress_autocomplete:
+            self._suppress_autocomplete = False
+            return
+        self._history_idx = -1
+        self._build_suggestions(event.value)
 
     # ── Command input (submit) ────────────────────────────────────────────────
 
@@ -1046,7 +1213,7 @@ class RetroBotApp(App):
                 return
             elif self._edit_step == 2:
                 result = self._cmd_registry.execute(
-                    "change", [self._selected_contact, self._edit_old_val, raw], self._service
+                    "change-phone", [self._selected_contact, self._edit_old_val, raw], self._service
                 )
                 if "updated" in result:
                     log.write(f"[{MINT}]{result}[/{MINT}]")
@@ -1187,7 +1354,7 @@ class RetroBotApp(App):
         elif self._mode == "edit_note":
             if raw:
                 result = self._note_registry.execute(
-                    "edit-note", [self._selected_note] + raw.split(), self._note_service
+                    "change-note", [self._selected_note] + raw.split(), self._note_service
                 )
                 log.write(f"[{MINT}]{result}[/{MINT}]")
                 self._save_notes()
@@ -1259,6 +1426,10 @@ class RetroBotApp(App):
             self._reset_mode()
 
         else:
+            if raw:
+                self._history.append(raw)
+                self._history_idx = -1
+            self._clear_suggestions()
             self._dispatch(raw, log)
             inp.clear()
 
@@ -1270,7 +1441,7 @@ class RetroBotApp(App):
         cmd   = parts[0].lower().translate(str.maketrans("", "", punctuation)) if parts else ""
         args  = parts[1:]
 
-        if cmd == "all":
+        if cmd == "all-contacts":
             self._populate_contacts_table()
             self._show_contacts_view()
             return
