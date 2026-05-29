@@ -11,12 +11,23 @@ def add_address(args, service):
     return service.add_address(name, " ".join(addr_parts))
 
 
-@contact_registry.command("change-address", "<name> <old_address> <new_address>  — update address", modifies_data=True)
+@contact_registry.command("change-address", "<name> <old_address> | <new_address>  — update address", modifies_data=True)
 @input_error
 def change_address(args, service):
-    if len(args) < 3:
-        raise ValueError("Usage: change-address <name> <old_address> <new_address>")
-    name, old, new, *_ = args
+    if not args:
+        raise ValueError("Usage: change-address <name> <old_address> | <new_address>")
+    name = args[0]
+    rest = " ".join(args[1:])
+    if "|" in rest:
+        old, _, new = rest.partition("|")
+        old, new = old.strip(), new.strip()
+    elif len(args) >= 3:
+        old = args[1]
+        new = " ".join(args[2:])
+    else:
+        raise ValueError("Usage: change-address <name> <old_address> | <new_address>")
+    if not old or not new:
+        raise ValueError("Usage: change-address <name> <old_address> | <new_address>")
     return service.change_address(name, old, new)
 
 
