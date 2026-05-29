@@ -169,9 +169,9 @@ MISSING_ARGS_ERROR = "Usage:"
 
 @pytest.mark.parametrize("cmd_name", [
     "add",
-    "change",
-    "delete",
-    "phone",
+    "change-phone",
+    "delete-contact",
+    "show-phone",
     "add-birthday",
     "show-birthday",
 ])
