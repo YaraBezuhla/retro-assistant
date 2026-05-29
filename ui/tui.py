@@ -22,7 +22,7 @@ from ui.retro_design_system import (
 )
 
 
-class AssistantBotApp(App):
+class RetroBotApp(App):
     CSS_PATH = ["retro.tcss"]
 
     def __init__(

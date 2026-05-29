@@ -87,7 +87,7 @@ retro-assistant/
 │   └── error_handler.py             # @input_error decorator
 │
 ├── ui/
-│   ├── tui.py                       # AssistantBotApp (Textual App)
+│   ├── tui.py                       # RetroBotApp (Textual App)
 │   ├── retro.tcss                   # TCSS stylesheet (neon green theme)
 │   └── retro_design_system.py       # Color tokens + layout constants
 │

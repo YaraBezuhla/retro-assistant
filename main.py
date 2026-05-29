@@ -5,7 +5,7 @@ from repositories.pickle_contact_repository import PickleContactRepository
 from repositories.pickle_note_repository import PickleNoteRepository
 from services.contact_service import ContactService
 from services.note_service import NoteService
-from ui.tui import AssistantBotApp
+from ui.tui import RetroBotApp
 
 DATA_FILE = Path(__file__).resolve().parent / "addressbook.pkl"
 NOTES_FILE = Path(__file__).resolve().parent / "notebook.pkl"
@@ -20,7 +20,7 @@ def main() -> None:
     notebook = note_repo.load()
     note_service = NoteService(notebook)
 
-    AssistantBotApp(
+    RetroBotApp(
         service=service,
         registry=contact_registry,
         repo=repo,
