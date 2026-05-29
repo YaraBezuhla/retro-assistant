@@ -153,13 +153,15 @@ def test_upcoming_birthdays_has_results():
     book.add_record(r)
     service = ContactService(book)
     result = service.get_upcoming_birthdays(7)
-    assert "Alice" in result
+    assert isinstance(result, list)
+    assert any(u["name"] == "Alice" for u in result)
 
 
 def test_upcoming_birthdays_empty():
     service = make_service()
     result = service.get_upcoming_birthdays(7)
-    assert "No upcoming birthdays yet." in result
+    assert isinstance(result, list)
+    assert len(result) == 0
 
 
 # ── Command layer: missing args returns error string ──────────────────────────
