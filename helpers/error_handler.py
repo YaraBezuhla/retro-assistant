@@ -9,6 +9,6 @@ def input_error(func):
         except ValueError as e:
             return str(e)
         except KeyError as e:
-            return str(e.args[0])
+            return f"Contact '{e.args[0]}' not found."
 
     return inner
