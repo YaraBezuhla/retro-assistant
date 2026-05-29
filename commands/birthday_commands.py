@@ -29,4 +29,8 @@ def show_upcoming_birthdays(args, service):
     days = int(args[0])
     if days <= 0:
         raise ValueError("Number of days must be positive.")
-    return service.get_upcoming_birthdays(days)
+    upcoming = service.get_upcoming_birthdays(days)
+    if not upcoming:
+        return "No upcoming birthdays yet."
+    lines = [f"  {u['name']}: {u['birthday']}" for u in upcoming]
+    return "Upcoming birthdays:\n" + "\n".join(lines)

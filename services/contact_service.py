@@ -102,11 +102,8 @@ class ContactService:
         record = self._require(name)
         return str(record.birthday) if record.birthday else f"No birthday for {name}."
 
-    def get_upcoming_birthdays(self, days: int) -> str:
-        upcoming = self._birthdays.get_upcoming(days)
-        if not upcoming:
-            return "No upcoming birthdays yet."
-        return "\n".join(f"{e['name']}: {e['birthday']}" for e in upcoming)
+    def get_upcoming_birthdays(self, days: int) -> list[dict]:
+        return self._birthdays.get_upcoming(days)
 
 
     def _require(self, name: str) -> Record:
