@@ -88,8 +88,8 @@ retro-assistant/
 │
 ├── ui/
 │   ├── tui.py                       # RetroBotApp (Textual App)
-│   ├── retro.tcss                   # TCSS stylesheet (neon green theme)
-│   └── retro_design_system.py       # Color tokens + layout constants
+│   ├── retro.tcss                  
+│   └── retro_design_system.py       
 │
 └── tests/
     └── test_bot.py
